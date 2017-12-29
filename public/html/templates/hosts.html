@@ -1,0 +1,105 @@
+<div layout="row">
+  <div flex="100">
+    <md-card>
+      <md-toolbar class="md-table-toolbar md-default" ng-hide="options.rowSelection && selected.length">
+      <div class="md-toolbar-tools">
+        <span>Hosts</span>
+        <div flex></div>
+        <md-button class="md-icon-button" ng-click="loadHosts()">
+        <md-icon>refresh</md-icon>
+        </md-button>
+      </div>
+      </md-toolbar>
+    <md-card-content>
+    
+    <table class="table md-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Url</th>
+          
+          <th></th>
+        </tr>
+      </thead>
+      <tbody ng-if="hosts.length > 0">
+        <tr ng-repeat="host in hosts">
+          <td >
+            <i class="material-icons" style="color: green;" ng-if="host.pm2_env.status === 'online'">check_circle</i>
+            <i class="material-icons" style="color: red;" ng-if="host.pm2_env.status === 'stopped'">error</i>
+          </td>
+          
+          <td>
+            <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;">{{host.name}}</div>
+          </td>
+          <td>
+            <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;">{{host.url}}</div>
+          </td>
+          
+          
+          <td>
+            <md-menu>
+            <md-button class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
+            <md-icon md-menu-origin>more_vert</md-icon>
+            </md-button>
+            <md-menu-content width="4">
+            
+            <md-menu-item>
+            <md-button ng-click="stopHost(host.pm_id)">Stop</md-button>
+            </md-menu-item>
+            <md-menu-item>
+            <md-button ng-click="startHost(host.pm_id)">Start</md-button>
+            </md-menu-item>
+            
+            <md-menu-item>
+            <md-button ng-click="restartHost(host.pm_id)">Restart</md-button>
+            </md-menu-item>
+            <md-menu-item>
+            <md-button ng-click="deleteHost(host.pm_id)">Delete</md-button>
+            </md-menu-item>
+            </md-menu-item>
+            </md-menu-content>
+            </md-menu>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="text-align: center;font-size: 18px;color: #777;" ng-if="hosts.length === 0">There are no hosts online, try hitting the refresh icon.</p>
+    </md-card-content>
+    
+    </md-card>
+  </div>
+</div>
+<div layout="row">
+  <div flex="100">
+    <md-card>
+    <md-toolbar class="md-table-toolbar md-default">
+    <div class="md-toolbar-tools">
+      <span>New host</span>
+      <div flex></div>
+      <md-button class="md-icon-button" ng-click="loadHosts()">
+      <md-icon>refresh</md-icon>
+      </md-button>
+    </div>
+    </md-toolbar>
+    <md-card-content>
+    
+    <div layout="row">
+      
+      <md-input-container flex>
+      <label>Name</label>
+      <input ng-model="newHost.name">
+      </md-input-container>
+      <md-input-container flex>
+      <label>Url</label>
+      <input ng-model="newHost.url">
+      </md-input-container>
+    </div>
+
+    </md-card-content>
+    <md-card-actions layout="row" layout-align="end center">
+    <md-button class="md-raised md-primary" ng-click="saveHost()">Save</md-button>
+    </md-card-actions>
+    </md-card>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+html,body {
+  background-color: #f5f5f5
+}
+h1,h2,h3,h4,h5 {
+  font-weight: 500;
+}
+
+a[ng-click] {
+  cursor: pointer;
+}
+
+.md-table {
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+.md-table tbody tr:hover, .md-table tbody tr:focus {
+  cursor:pointer;
+  background-color:rgba(63,81,181,0.1);
+}
+
+.md-table thead>tr {
+  border-bottom: 1px solid rgb(230,230,230);
+  color: rgb(130,130,130);
+  text-align: left;
+  font-size: 0.9em;
+  font-weight: normal;
+  
+}
+
+.md-table tr.header>a{
+  text-decoration: none;
+  color: inherit;
+}
+
+.md-table td {
+  white-space: nowrap;
+  font-size: 0.8em;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+
+.md-table th {
+  white-space: nowrap;
+  font-size: 15px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  font-weight: normal;
+}

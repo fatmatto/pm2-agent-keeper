@@ -1,0 +1,20 @@
+<div layout="row">
+            <div flex="100">
+              <md-card>
+              <md-toolbar class="md-table-toolbar md-default" ng-hide="options.rowSelection && selected.length">
+              <div class="md-toolbar-tools">
+                <span>Logs for process {{jobId}} in host {{host}}</span>
+                <div flex></div>
+                <md-button class="md-icon-button" ng-click="getJobLogs()">
+                <md-icon>refresh</md-icon>
+                </md-button>
+              </div>
+              </md-toolbar>
+              <md-card-content>
+              
+             <pre>{{logs}}</pre>
+              </md-card-content>
+              
+              </md-card>
+            </div>
+          </div>

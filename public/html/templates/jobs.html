@@ -1,0 +1,79 @@
+
+<div layout="row" ng-repeat="host in hosts">
+  <div flex="100">
+    <md-card>
+    <md-toolbar class="md-table-toolbar md-default" ng-hide="options.rowSelection && selected.length">
+    <div class="md-toolbar-tools">
+      <span>Jobs in {{host.name}}</span>
+      <div flex></div>
+      <md-button class="md-icon-button" ng-click="loadJobsInHost(host)">
+      <md-icon>refresh</md-icon>
+      </md-button>
+    </div>
+    </md-toolbar>
+    <md-card-content>
+    
+    <table class="table md-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>PID</th>
+          <th>Name</th>
+          <th>Path</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody ng-if="host.jobs.length > 0">
+        <tr ng-repeat="job in host.jobs">
+          <td >
+            <i class="material-icons" style="color: green;" ng-if="job.pm2_env.status === 'online'">check_circle</i>
+            <i class="material-icons" style="color: red;" ng-if="job.pm2_env.status === 'stopped'">error</i>
+          </td>
+          <td>
+            <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;">{{job.pid}}</div>
+          </td>
+          <td>
+            <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;">{{job.name}}</div>
+          </td>
+          <td>
+            <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;">{{job.pm2_env.pm_exec_path}}</div>
+          </td>
+          
+          <td>{{job.pm2_env.status}}</td>
+          <td>
+            <md-menu>
+            <md-button class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
+            <md-icon md-menu-origin>more_vert</md-icon>
+            </md-button>
+            <md-menu-content width="4">
+            
+            <md-menu-item>
+            <md-button ng-click="getJobLogs(host,job.pm_id)">View Logs</md-button>
+            </md-menu-item>
+            <md-menu-item>
+            <md-button ng-click="stopJob(host,job.pm_id)">Stop</md-button>
+            </md-menu-item>
+            <md-menu-item>
+            <md-button ng-click="startJob(host,job.pm_id)">Start</md-button>
+            </md-menu-item>
+            
+            <md-menu-item>
+            <md-button ng-click="restartJob(host,job.pm_id)">Restart</md-button>
+            </md-menu-item>
+            <md-menu-item>
+            <md-button ng-click="deleteJob(host,job.pm_id)">Delete</md-button>
+            </md-menu-item>
+            </md-menu-item>
+            </md-menu-content>
+            </md-menu>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="text-align: center;font-size: 18px;color: #777;" ng-if="host.jobs.length === 0 || !host.jobs">This host has no jobs online, try hitting the refresh icon.</p>
+    </md-card-content>
+    
+    </md-card>
+  </div>
+</div>

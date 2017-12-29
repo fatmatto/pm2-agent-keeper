@@ -1,0 +1,83 @@
+<html lang="en" >
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.5/angular-material.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+      <link href="/css/style.css" rel="stylesheet">
+    </head>
+    <body ng-app="ApioBrokerAdminUI" ng-cloak ng-controller="MainController" layout="column">
+      <!--
+      Your HTML content here
+      -->
+      
+      <md-toolbar class="md-hue-2">
+      <div class="md-toolbar-tools">
+        
+        <h2 flex="" md-truncate="">Fleet UI</h2>
+        <md-button class="md-icon-button" aria-label="More">
+        <i class="material-icons">more_vert</i>
+        </md-button>
+      </div>
+      </md-toolbar>
+      <div layout="row">
+        <div flex="15">
+          
+          <md-list flex>
+          <md-list-item >
+          <div class="md-list-item-text" layout="column">
+            <h4>Admin</h4>
+          </div>
+          </md-list-item>
+          <md-list-item >
+          <div class="md-list-item-text" layout="column">
+            <a  href="#/">Jobs</a>
+          </div>
+          </md-list-item>
+          <md-list-item >
+          <div class="md-list-item-text" layout="column">
+            <a href="#/hosts">Hosts</a>
+          </div>
+          </md-list-item>
+          <md-list-item >
+          <div class="md-list-item-text" layout="column">
+            <a href="#/logs">Logs</a>
+          </div>
+          </md-list-item>
+          <md-list-item >
+         
+          </md-list>
+        </div>
+        <div flex="85">
+          
+         
+         <ng-view></ng-view>
+        </div>
+        
+      </div>
+      
+      
+      <!-- Angular Material requires Angular.js Libraries -->
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script>
+      <!-- Angular Material Library -->
+      <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.5/angular-material.js"></script>
+      <script src="https://cdn.rawgit.com/zenorocha/clipboard.js/master/dist/clipboard.min.js"></script>
+      
+      <!-- Your application bootstrap  -->
+      <script type="text/javascript" src="/js/app.js">
+      
+      
+      
+      </script>
+      
+    </body>
+  </html>
+  <!--
+  Copyright 2016 Google Inc. All Rights Reserved.
+  Use of this source code is governed by an MIT-style license that can be in foundin the LICENSE file at https://material.angularjs.org/license.
+  -->
