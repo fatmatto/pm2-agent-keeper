@@ -9,13 +9,19 @@ class Jar {
     this.data = {}
     fs.readFile('./jar.json','utf-8', (err, file) => {
       if (err) {
-        console.log("No file available");
+        console.log("No file available. Creating a new one");
+         this.persist(()=>{
+            console.log("New db file created")
+          })
       } else {
         try {
           this.data = JSON.parse(file)
         } catch (e) {
           this.emitter.emit('error',e)
-          console.log("jar.json file is not valid json. Ignoring it.")
+          console.log("jar.json file is not valid json. Creating a new one.")
+          this.persist(()=>{
+            console.log("New db file created")
+          })
         }
       }
     })
