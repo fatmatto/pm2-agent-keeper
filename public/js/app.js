@@ -1,13 +1,14 @@
 var app = angular.module('ApioBrokerAdminUI', ['ngMaterial', 'ngMessages', 'ngRoute'])
 
+
 app.config(function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
       templateUrl: '/html/templates/jobs.html',
       controller: 'MainController'
     })
-    
-    .when('/hosts/:host/jobs/:jobId/logs', {
+
+  .when('/hosts/:host/jobs/:jobId/logs', {
       templateUrl: '/html/templates/logs.html',
       controller: 'LogsController'
     })
@@ -17,34 +18,74 @@ app.config(function($routeProvider, $locationProvider) {
     })
 })
 
-app.controller('LogsController', function($scope,$routeParams,$http) {
-    
-    $scope.host = $routeParams.host
-    $scope.jobId = $routeParams.jobId
-    
-    $scope.getJobLogs = function() {
 
-      $http({
-          url: "http://"+$scope.host + '/' + $scope.jobId + '/logs',
-          method: 'GET'
-        })
-        .then(function(response) {
-          
-          $scope.logs = response.data.data
-        })
-        .catch(function(error) {
-          console.log(error)
-        })
+function msToReadableTime(ms) {
+  var date = new Date(ms);
+  var str = '';
+  str += date.getUTCDate() - 1 + " days, ";
+  str += date.getUTCHours() + " hours, ";
+  str += date.getUTCMinutes() + " minutes, ";
+  str += date.getUTCSeconds() + " seconds, ";
+  str += date.getUTCMilliseconds() + " millis";
+  return str
+
+}
+
+function ProcessInfoController($scope, $mdDialog, job, $rootScope) {
+  $scope.hide = function() {
+    $mdDialog.hide();
+  };
+
+  $scope.cancel = function() {
+    $mdDialog.cancel();
+  };
+
+  $scope.answer = function(answer) {
+    $mdDialog.hide(answer);
+  };
+
+  $scope.job = $rootScope.jobToInspect
+
+  // Re-process uptime
+  $scope.job.pm2_env.pm_uptime = msToReadableTime($scope.job.pm2_env.pm_uptime)
+
+  // Re-process memory usage
+  $scope.job.monit.memory = (($scope.job.monit.memory / 1000) / 1000).toFixed(2)+" MB"
+
+
+
+}
+
+app.controller('LogsController', function($scope, $routeParams, $http) {
+
+  $scope.host = $routeParams.host
+  $scope.jobId = $routeParams.jobId
+
+  $scope.getJobLogs = function() {
+
+    $http({
+        url: "http://" + $scope.host + '/' + $scope.jobId + '/logs',
+        method: 'GET'
+      })
+      .then(function(response) {
+
+        $scope.logs = response.data.data
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
   }
   $scope.getJobLogs()
-})
 
+
+
+})
 
 
 
 /** Hosts Controller */
 app.controller('HostsController', function($scope, $http) {
-  
+
   $scope.hosts = []
   $scope.newHost = {
     url: 'http://example.com:8080',
@@ -53,6 +94,8 @@ app.controller('HostsController', function($scope, $http) {
   $scope.openMenu = function($mdMenu, ev) {
     $mdMenu.open(ev)
   }
+
+
 
   $scope.loadHosts = function() {
     $http.get('/api/hosts')
@@ -85,13 +128,47 @@ app.controller('HostsController', function($scope, $http) {
 
 })
 
-app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $mdMenu) {
-  
+app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $mdMenu, $rootScope) {
+
   $scope.jobs = []
   $scope.hosts = []
 
   $scope.openMenu = function($mdMenu, ev) {
     $mdMenu.open(ev)
+  }
+  $scope.getJobInfo = function(wantedHost, jobId) {
+
+    $scope.hosts.forEach(function(host) {
+      if (!host.jobs)
+        return;
+      if (host.name === wantedHost.name)
+        host.jobs.forEach(function(job) {
+          if (job.pm_id === jobId) {
+            console.log("Trovato il job con id " + jobId + " ovver ", job)
+            $rootScope.jobToInspect = job
+            $scope.job_information = job
+          }
+
+        })
+    })
+
+    $mdDialog.show({
+        locals: {
+          job: $scope.job_information
+        },
+        controller: ProcessInfoController,
+        templateUrl: '/html/templates/process_dialog.html',
+        parent: angular.element(document.body),
+        clickOutsideToClose: true
+      })
+      .then(function(answer) {
+        $scope.status = 'You said the information was "' + answer + '".';
+      }, function() {
+        $scope.status = 'You cancelled the dialog.';
+      });
+
+
+
   }
 
   $scope.loadHosts = function() {
@@ -110,7 +187,7 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
 
 
   $scope.loadJobsInHost = function(host) {
-    
+
     $http.get(host.url + '/')
       .then(function(response) {
         host.jobs = response.data
@@ -167,9 +244,9 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
   }
 
   $scope.getJobLogs = function(host, jobId) {
-    var url = window.encodeURIComponent(host.url.replace("http://",""))
+    var url = window.encodeURIComponent(host.url.replace("http://", ""))
 
-    return window.location.href = '#/hosts/'+url+'/jobs/'+jobId+'/logs'
+    return window.location.href = '#/hosts/' + url + '/jobs/' + jobId + '/logs'
   }
 
 

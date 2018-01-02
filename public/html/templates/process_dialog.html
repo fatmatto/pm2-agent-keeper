@@ -1,0 +1,84 @@
+<md-dialog aria-label="Mango (Fruit)">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{job.name}} ({{job.pid}})</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="width:800px;max-height:810px; ">
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="one">
+          <md-content class="md-padding">
+            <table class="md-table">
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Process name</b></td>
+                  <td>{{job.name}}</td>
+                </tr>
+                <tr>
+                  <td><b>Process id</b></td>
+                  <td>{{job.pm_id}}</td>
+                </tr>
+                <tr>
+                  <td><b>Uptime</b></td>
+                  <td>{{job.pm2_env.pm_uptime}}</td>
+                </tr>
+                <tr>
+                  <td><b>Memory</b></td>
+                  <td>{{job.monit.memory}}</td>
+                </tr>
+                <tr>
+                  <td><b>CPU</b></td>
+                  <td>{{job.monit.cpu}}</td>
+                </tr>
+                <tr>
+                  <td><b>NodeJS Version</b></td>
+                  <td>{{job.pm2_env.node_version}}</td>
+                </tr>
+                <tr>
+                  <td><b>NodeJS Args</b></td>
+                  <td>{{job.pm2_env.node_args}}</td>
+                </tr>
+                <tr>
+                  <td><b>Git Remote</b></td>
+                  <td>{{job.pm2_env.versioning.url}}</td>
+                </tr>
+                <tr>
+                  <td><b>Git commit msg</b></td>
+                  <td><em>"{{job.pm2_env.versioning.comment}}"</em></td>
+                </tr>
+                <tr>
+                  <td><b>Git update time</b></td>
+                  <td>{{job.pm2_env.versioning.update_time | date}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </md-content>
+        </md-tab>
+        <md-tab label="two">
+          <md-content class="md-padding">
+            <p>This tab is left blank for future usage</p>
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button md-autofocus ng-click="cancel()">
+        Close
+      </md-button>
+      <span flex></span>
+      
+    </md-dialog-actions>
+  </form>
+</md-dialog>
