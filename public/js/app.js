@@ -275,6 +275,21 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
       })
   }
 
+
+  $scope.restartJob = function (host, jobId) {
+
+    $http.put(host.url + '/' + jobId + '/restart')
+      .then(function (response) {
+        return $scope.loadJobs()
+      })
+      .then(function (response) {
+        console.log("Jobs reloaded")
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
   $scope.deleteJob = function(host, jobId) {
     $http.put(host.url + '/' + jobId + '/delete')
       .then(function(response) {

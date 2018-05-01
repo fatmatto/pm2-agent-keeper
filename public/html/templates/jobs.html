@@ -148,23 +148,23 @@
                   <md-menu-content width="4">
 
                     <md-menu-item>
-                      <md-button ng-click="getJobLogs(host,job.pm_id)">View Logs</md-button>
+                      <md-button ng-click="getJobLogs(job.host,job.pm_id)">View Logs</md-button>
                     </md-menu-item>
                     <md-menu-item>
                       <md-button ng-click="getJobInfo(job.host,job.pm_id)">Info</md-button>
                     </md-menu-item>
                     <md-menu-item>
-                      <md-button ng-click="stopJob(host,job.pm_id)">Stop</md-button>
+                      <md-button ng-click="stopJob(job.host,job.pm_id)">Stop</md-button>
                     </md-menu-item>
                     <md-menu-item>
-                      <md-button ng-click="startJob(host,job.pm_id)">Start</md-button>
+                      <md-button ng-click="startJob(job.host,job.pm_id)">Start</md-button>
                     </md-menu-item>
 
                     <md-menu-item>
-                      <md-button ng-click="restartJob(host,job.pm_id)">Restart</md-button>
+                      <md-button ng-click="restartJob(job.host,job.pm_id)">Restart</md-button>
                     </md-menu-item>
                     <md-menu-item>
-                      <md-button ng-click="deleteJob(host,job.pm_id)">Delete</md-button>
+                      <md-button ng-click="deleteJob(job.host,job.pm_id)">Delete</md-button>
                     </md-menu-item>
                     </md-menu-item>
                   </md-menu-content>
