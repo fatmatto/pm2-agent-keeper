@@ -53,3 +53,10 @@ a.link {
   text-overflow: ellipsis;
   font-weight: normal;
 }
+
+
+#sidenav md-list-item:hover,
+#sidenav md-list-item.active {
+  background-color: rgba(0,0,0,.1);
+  cursor: pointer;
+}

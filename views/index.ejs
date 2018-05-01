@@ -22,32 +22,31 @@
       </div>
       </md-toolbar>
       <div layout="row">
-        <div flex="15">
-          
-          <md-list flex>
-          <md-list-item >
-          <div class="md-list-item-text" layout="column">
-            <h4>Admin</h4>
-          </div>
-          </md-list-item>
-          <md-list-item >
-          <div class="md-list-item-text" layout="column">
-            <a  href="#/">Jobs</a>
-          </div>
-          </md-list-item>
-          <md-list-item >
-          <div class="md-list-item-text" layout="column">
-            <a href="#/hosts">Hosts</a>
-          </div>
-          </md-list-item>
-          <md-list-item >
-          <div class="md-list-item-text" layout="column">
-            <a href="#/logs">Logs</a>
-          </div>
-          </md-list-item>
-          <md-list-item >
-         
+       
+        <div flex="15" id="sidenav">
+          <md-list>
+            <md-list-item >
+              <div class="md-list-item-text" layout="column">
+                <h4>Admin</h4>
+              </div>
+            </md-list-item>
+            <md-list-item ng-href="#/">
+              <md-icon>lightbulb_outline</md-icon>
+              <p>Services</p>
+            </md-list-item>
+            <md-list-item  ng-href="#/hosts">
+              <md-icon>dns</md-icon>
+              <p>Nodes</p>
+            </md-list-item>
+            <md-list-item  ng-href="#/logs">
+              <md-icon>search</md-icon>
+              <p>Logs</p>
+            </md-list-item>
+            
           </md-list>
+          <md-list flex>
+          
+         
         </div>
         <div flex="85">
           

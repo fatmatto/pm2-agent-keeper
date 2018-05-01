@@ -219,14 +219,14 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
           var delta = Date.now() - job.pm2_env.pm_uptime
 
 
-          if (job.pm2_env.pm_uptime >= day ) {
+          if (delta >= day ) {
             job.readable_uptime = Math.trunc(delta / day) + " days ago"
           }
 
-          else if (job.pm2_env.pm_uptime >= hour) {
+          else if (delta >= hour) {
             job.readable_uptime = Math.trunc(delta / hour) + " hours ago"
           }
-          else if (job.pm2_env.pm_uptime >= minute) {
+          else if (delta >= minute) {
             job.readable_uptime = Math.trunc(delta / minute) + " minutes ago"
           }
           else {

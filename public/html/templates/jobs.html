@@ -106,7 +106,7 @@
           <thead>
             <tr>
               <th></th>
-              <th>PID</th>
+              <!-- <th>PID</th> -->
               <th>Name</th>
               <th>Host</th>
               <th>Status</th>
@@ -119,11 +119,12 @@
             <tr ng-repeat="job in jobs">
               <td>
                 <i class="material-icons" style="color: green;" ng-if="job.pm2_env.status === 'online'">check_circle</i>
-                <i class="material-icons" style="color: red;" ng-if="job.pm2_env.status === 'stopped'">error</i>
+                <i class="material-icons" style="color:rgb(250, 192, 0)" ng-if="job.pm2_env.status === 'stopped'">pause_circle_filled</i>
+                <i class="material-icons" style="color: red;" ng-if="job.pm2_env.status === 'errored'">error</i>
               </td>
-              <td>
+              <!-- <td>
                 <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;">{{job.pid}}</div>
-              </td>
+              </td> -->
               <td>
                 <div style="max-width: 450px;text-overflow: ellipsis;overflow-x: hidden;"><a class="link" ng-click="getJobInfo(job.host,job.pm_id)">{{job.name}}</a></div>
               </td>
