@@ -123,6 +123,20 @@ app.controller('HostsController', function($scope, $http) {
       })
   }
 
+  $scope.deleteHost = function(host) {
+    $http({
+      method: 'DELETE',
+      url: '/api/hosts/'+host.uuid
+    })
+      .then(function (response) {
+        $scope.hosts = response.data
+
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
   $scope.loadHosts()
 
 
@@ -171,7 +185,10 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
 
   }
 
+
+
   $scope.loadHosts = function() {
+    $scope.jobs = []
     return $http.get('/api/hosts')
       .then(function(response) {
         $scope.hosts = response.data
@@ -191,6 +208,34 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
     $http.get(host.url + '/')
       .then(function(response) {
         host.jobs = response.data
+
+        $scope.jobs = $scope.jobs.concat(host.jobs.map(function(job){
+          job.host = host
+
+          var minute = 1000 * 60
+          var hour = minute * 60
+          var day = hour * 24
+
+          var delta = Date.now() - job.pm2_env.pm_uptime
+
+
+          if (job.pm2_env.pm_uptime >= day ) {
+            job.readable_uptime = Math.trunc(delta / day) + " days ago"
+          }
+
+          else if (job.pm2_env.pm_uptime >= hour) {
+            job.readable_uptime = Math.trunc(delta / hour) + " hours ago"
+          }
+          else if (job.pm2_env.pm_uptime >= minute) {
+            job.readable_uptime = Math.trunc(delta / minute) + " minutes ago"
+          }
+          else {
+            job.readable_uptime = Math.trunc(delta / 1000) + " seconds ago"
+          }
+
+          return job
+        }))
+
       })
       .catch(function(error) {
         console.log(error)

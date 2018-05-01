@@ -1,12 +1,11 @@
 const fs = require('fs')
-const EventEmitter = require('events');
+const EventEmitter = require('events')
 
 class Jar {
-
-  constructor() {
+  constructor () {
     this.emitter = new EventEmitter()
     this.configuration = {
-      filepath : './jar.json',
+      filepath: './jar.json',
       /**
        * When should the data be persisted to the filepath
        * Possible values are
@@ -15,25 +14,30 @@ class Jar {
        * never: Never persist to disk
        * @type {String}
        */
-      peristanceStrategy : 'set'
+      peristanceStrategy: 'set'
     }
     this.data = {}
     fs.readFile(this.configuration.filepath, 'utf-8', (err, file) => {
       if (err) {
-        console.log("No database file available. Creating a new one...");
+        console.log('No database file available. Creating a new one...')
         this.persist(() => {
-          console.log("New database file created.")
+          console.log('New database file created.')
         })
       } else {
+        console.log('Restoring db from file')
         try {
           this.data = JSON.parse(file)
         } catch (e) {
           this.emitter.emit('error', e)
-          console.log(this.configuration.filepath+" file is not valid json. Creating a new one.")
+          console.log(this.configuration.filepath + ' file is not valid json. Creating a new one.')
           this.persist(() => {
-            console.log("New db file created")
+            console.log('New db file created')
           })
         }
+
+        console.log('DB is now', this.data)
+
+        this.emitter.emit('ready')
       }
 
       /**
@@ -51,32 +55,34 @@ class Jar {
    * Writes current data to a file and calls optional cllback with error
    * @param  {Function} cb [description]
    */
-  persist(cb) {
+  persist (cb) {
     let json = JSON.stringify(this.data)
     fs.writeFile(this.configuration.filepath, json, (err) => {
       if (err) {
         this.emitter.emit('error', err)
       } else {
         this.emitter.emit('persisted')
-        if ("function" === typeof cb) {
+        if (typeof cb === 'function') {
           cb()
         }
       }
     })
   }
 
-
-  get(key) {
+  get (key) {
     return this.data[key]
   }
 
-  set(key, value) {
+  set (key, value) {
     this.data[key] = value
-    if (this.configuration.peristanceStrategy === 'interval') {
+    if (this.configuration.peristanceStrategy === 'set') {
       this.persist()
     }
   }
-}
 
+  on (event, fn) {
+    return this.emitter.on(event, fn)
+  }
+}
 
 module.exports = Jar
