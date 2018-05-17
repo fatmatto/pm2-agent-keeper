@@ -5,7 +5,7 @@ app.config(function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
       templateUrl: '/html/templates/jobs.html',
-      controller: 'MainController'
+      controller: 'JobsListController'
     })
 
   .when('/hosts/:host/jobs/:jobId/logs', {
@@ -142,29 +142,19 @@ app.controller('HostsController', function($scope, $http) {
 
 })
 
-app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $mdMenu, $rootScope) {
+app.controller('JobsListController', function($scope, $http, $mdToast, $mdDialog, $mdMenu, $rootScope) {
 
   $scope.jobs = []
-  $scope.hosts = []
 
   $scope.openMenu = function($mdMenu, ev) {
     $mdMenu.open(ev)
   }
-  $scope.getJobInfo = function(wantedHost, jobId) {
+  $scope.getJobInfo = function(job) {
 
-    $scope.hosts.forEach(function(host) {
-      if (!host.jobs)
-        return;
-      if (host.name === wantedHost.name)
-        host.jobs.forEach(function(job) {
-          if (job.pm_id === jobId) {
-            console.log("Trovato il job con id " + jobId + " ovver ", job)
-            $rootScope.jobToInspect = job
-            $scope.job_information = job
-          }
+    $rootScope.jobToInspect = job
+    $scope.job_information = job
 
-        })
-    })
+    console.log("JOBTOINSPECT",job)
 
     $mdDialog.show({
         locals: {
@@ -185,68 +175,20 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
 
   }
 
-
-
-  $scope.loadHosts = function() {
-    $scope.jobs = []
-    return $http.get('/api/hosts')
-      .then(function(response) {
-        $scope.hosts = response.data
-        $scope.hosts.forEach($scope.loadJobsInHost)
-
-      })
-      .catch(function(error) {
-        console.log(error)
-      })
+  $scope.loadJobs = function() {
+    $http.get('/api/jobs')
+    .then(function(response){
+      $scope.jobs = response.data
+    })
   }
-
-  $scope.loadHosts()
-
-
-  $scope.loadJobsInHost = function(host) {
-
-    $http.get(host.url + '/')
-      .then(function(response) {
-        host.jobs = response.data
-
-        $scope.jobs = $scope.jobs.concat(host.jobs.map(function(job){
-          job.host = host
-
-          var minute = 1000 * 60
-          var hour = minute * 60
-          var day = hour * 24
-
-          var delta = Date.now() - job.pm2_env.pm_uptime
-
-
-          if (delta >= day ) {
-            job.readable_uptime = Math.trunc(delta / day) + " days ago"
-          }
-
-          else if (delta >= hour) {
-            job.readable_uptime = Math.trunc(delta / hour) + " hours ago"
-          }
-          else if (delta >= minute) {
-            job.readable_uptime = Math.trunc(delta / minute) + " minutes ago"
-          }
-          else {
-            job.readable_uptime = Math.trunc(delta / 1000) + " seconds ago"
-          }
-
-          return job
-        }))
-
-      })
-      .catch(function(error) {
-        console.log(error)
-      })
-  }
+  $scope.loadJobs()
 
 
 
-  $scope.stopJob = function(host, jobId) {
+
+  $scope.stopJob = function(job) {
     $http({
-        url: host.url + '/' + jobId + '/stop',
+        url: job.host.url + '/' + job.pm_id + '/stop',
         method: 'PUT',
         data: {}
       })
@@ -261,9 +203,9 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
       })
   }
 
-  $scope.startJob = function(host, jobId) {
+  $scope.startJob = function(job) {
 
-    $http.put(host.url + '/' + jobId + '/start')
+    $http.put(job.host.url + '/' + job.pm_id + '/start')
       .then(function(response) {
         return $scope.loadJobs()
       })
@@ -276,9 +218,9 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
   }
 
 
-  $scope.restartJob = function (host, jobId) {
+  $scope.restartJob = function (job) {
 
-    $http.put(host.url + '/' + jobId + '/restart')
+    $http.put(job.host.url + '/' + job.pm_id + '/restart')
       .then(function (response) {
         return $scope.loadJobs()
       })
@@ -290,8 +232,8 @@ app.controller('MainController', function($scope, $http, $mdToast, $mdDialog, $m
       })
   }
 
-  $scope.deleteJob = function(host, jobId) {
-    $http.put(host.url + '/' + jobId + '/delete')
+  $scope.deleteJob = function(job) {
+    $http.put(job.host.url + '/' + job.pm_id + '/delete')
       .then(function(response) {
         return $scope.loadJobs()
       })

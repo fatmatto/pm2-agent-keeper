@@ -1,80 +1,53 @@
-var express = require('express');
-var router = express.Router();
-const { exec } = require('child_process');
+var express = require('express')
+var router = express.Router()
+const request = require('superagent')
+const async = require('async')
+router.get('/', function (req, res, next) {
+  let hosts = req.app.get('db').get('hosts') || []
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-
-  let jobs = []
-
-  
-  exec('pm2 jlist', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
+  let callbacks = hosts.map(host => {
+    return function (callback) {
+      request
+        .get(host.url)
+        .timeout({
+          response: 1000, // Wait 5 seconds for the server to start sending,
+          deadline: 1000 // but allow 1 minute for the file to finish loading.
+        })
+        .end(callback)
     }
+  })
 
-    let processList = JSON.parse(stdout);
-
-    jobs = jobs.concat(processList)
-    console.log(JSON.stringify(processList,null,2))
-    res.send(jobs);
-  });
-
-});
-
-router.get('/:jobId/logs', function(req, res, next) {
-
-  let jobs = []
-
-  
-  exec('pm2 jlist', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
+  async.parallel(callbacks, (err, results) => {
+    if (err) {
+      console.log(err)
     }
+    var output = []
+    results = results.forEach((response, index) => {
+      response = response || {body: []}
 
-    let processList = JSON.parse(stdout);
+      response.body.forEach(job => {
+        job.host = hosts[index]
 
-    jobs = jobs.concat(processList)
-    console.log(JSON.stringify(processList,null,2))
-    res.send(jobs);
-  });
+        var minute = 1000 * 60
+        var hour = minute * 60
+        var day = hour * 24
 
-});
+        var delta = Date.now() - job.pm2_env.pm_uptime
 
+        if (delta >= day) {
+          job.readable_uptime = Math.trunc(delta / day) + ' days'
+        } else if (delta >= hour) {
+          job.readable_uptime = Math.trunc(delta / hour) + ' hours'
+        } else if (delta >= minute) {
+          job.readable_uptime = Math.trunc(delta / minute) + ' minutes'
+        } else {
+          job.readable_uptime = Math.trunc(delta / 1000) + ' seconds'
+        }
+        output.push(job)
+      })
+    })
+    return res.send(output)
+  })
+})
 
-
-
-
-router.put('/:jobId/stop', function(req, res, next) {
-  exec('pm2 stop '+req.params.jobId, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return res.status(400).send({error : "An error has occurred"});
-    }
-    res.send({status : true});
-  });  
-});
-
-router.put('/:jobId/start', function(req, res, next) {
-  exec('pm2 start '+req.params.jobId, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return res.status(400).send({error : "An error has occurred"});
-    }
-    res.send({status : true});
-  });  
-});
-
-router.put('/:jobId/delete', function(req, res, next) {
-  exec('pm2 delete '+req.params.jobId, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return res.status(400).send({error : "An error has occurred"});
-    }
-    res.send({status : true});
-  });  
-});
-
-module.exports = router;
+module.exports = router
