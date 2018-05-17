@@ -17,14 +17,15 @@ router.get('/', function (req, res, next) {
     }
   })
 
-  async.parallel(callbacks, (err, results) => {
+  async.parallel(async.reflectAll(callbacks), (err, results) => {
     if (err) {
       console.log(err)
     }
     var output = []
     results = results.forEach((response, index) => {
-      response = response || {body: []}
+      response = response.value || {body: []}
 
+      response.body = response.body || []
       response.body.forEach(job => {
         job.host = hosts[index]
 
